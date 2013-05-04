@@ -1,0 +1,119 @@
+<html>
+  <head>
+  <script type="text/javascript" src="jquery/jquery.js"></script>
+  <script type="text/javascript" src="jquery/jquery-ui.js"></script>
+  <script type="text/javascript" src="jscolor/jscolor.js"></script>
+  <link href="jquery/jquery-ui.css" rel="stylesheet" type="text/css"></link>
+  
+  <style>
+    body {
+      background:#ccc;
+      font:14px/14px Arial, Helvetica, sans-serif; 
+    }
+    label {
+      font-size:11px; 
+      font-weight:bold; 
+      color:#666;
+    }
+    .option {
+      padding: 10px;
+    }
+    .top_separator {
+      padding: 30px;
+    }
+  </style>
+  </style>
+  </head>
+  <body>  
+  <script>
+    $(document).ready(function() {
+      var BG = chrome.extension.getBackgroundPage();
+      
+      $('#preview_color').val(BG.getPreviewLinkColor());
+      $('#preview_window').val(BG.getPreviewWindowBehavior());
+      $('#preview_delay').val(BG.getPreviewDelay());
+      $('#preview_disable').val(BG.getPreviewDisable());
+      $('#preview_useip').val(BG.getPreviewUseIP());
+      
+      if ($('#preview_delay').val() > 1) {
+        $('#preview_delay_second').text(' seconds');
+      }
+      else {
+        $('#preview_delay_second').text(' second');
+      }
+      
+      $('#preview_color').change(function() {
+        BG.setPreviewLinkColor($('#preview_color').val());
+      });
+      $('#preview_disable').change(function() {
+        BG.setPreviewDisable($('#preview_disable').val());
+      });
+      $('#preview_useip').change(function() {
+        BG.setPreviewUseIP($('#preview_useip').val());
+      });
+      $('#preview_window').change(function() {
+        BG.setPreviewWindowBehavior($('#preview_window').val());
+      });
+      $('#preview_delay').change(function() {
+        BG.setPreviewDelay($('#preview_delay').val());
+        if ($('#preview_delay').val() > 1) {
+          $('#preview_delay_second').text(' seconds');
+        }
+        else {
+          $('#preview_delay_second').text(' second');
+        }
+      });
+      
+      $('#options_dlg').dialog({
+        height: 420,
+        width:  650,
+        title: 'SeeIt! options',
+        close: function() { window.close(); },
+        buttons: { "Reset" : function(){
+                                $('#preview_color').val(BG.getPreviewLinkColorDefault()).trigger('change');
+                                $('#preview_window').val(BG.getPreviewWindowBehaviorDefault()).trigger('change');
+                                $('#preview_delay').val(BG.getPreviewDelayDefault()).trigger('change');
+                                $('#preview_disable').val(BG.getPreviewDisableDefault()).trigger('change');
+                                $('#preview_useip').val(BG.getPreviewUseIPDefault()).trigger('change');
+                             } 
+                 }
+      });
+      
+      $('#options_dlg').dialog('open');
+    });
+  </script>
+    <div id="options_dlg">
+      <div class="top_separator">
+      <div class="option" align="center">
+        <span>When I preview a link, </span>
+        <select id="preview_window">
+          <option value="0">do nothing to existing previews.</option>
+          <option value="1">minimize existing previews.</option>
+          <option value="2">close existing previews.</option>
+        </select>
+      </div>
+      <div class="option" align="center">
+        <span>Disable preview of </span>
+        <select id="preview_disable">
+          <option value="0">none</option>
+          <option value="1">images</option>
+          <option value="2">web pages</option>
+        </select>
+      </div>
+      <div class="option" align="center">
+        <span>For web pages </span>
+        <select id="preview_useip">
+          <option value="1">use instapaper.com to preview</option>
+          <option value="0">don't use instapaper.com to preview</option>
+        </select>
+      </div>
+      <div class="option" align="center">
+        <span>Open previews to links after </span><input id="preview_delay" type="text" size=3/><span id="preview_delay_second">seconds</span></span>
+      </div>      
+      <div class="option" align="center">
+        <span>Change the color of previewed links to </span>
+        <input id="preview_color" class="color" size=8/>
+      </div>
+    </div>
+  </body>
+</html>

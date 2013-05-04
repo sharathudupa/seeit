@@ -1,0 +1,26 @@
+{
+  "name": "SeeIt!",
+  "version": "2.5",
+  "description": "Improve browsing experience of reddit.com by adding preview capability. A great companion extension for reddit.com.",
+  "icons": {
+    "48": "images/pageIcon.ico",
+    "128": "images/pageIcon.ico"
+  },
+  "background_page": "background.html",
+  "page_action": {
+    "default_icon": "images/pageIcon.png",
+    "default_title": "seeIt!",
+    "default_popup": "popup/popup.html"
+  },
+  "permissions": [
+    "tabs", "http://*/*", "history"
+  ],
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": ["*://*.reddit.com/*"],
+      "css": ["jquery/jquery-ui.css"],
+      "js": ["jquery/jquery.js", "jquery/jquery-ui.js", "jquery/jquery-ui-dialog.js", "canvas.js"]
+    }
+  ]
+}

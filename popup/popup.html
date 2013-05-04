@@ -1,0 +1,49 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="popup.css" />
+    <script src="../jquery/jquery.js"> </script>
+    <script>
+      var BG = chrome.extension.getBackgroundPage();
+      
+      function updateStatus() {
+        if (BG.sessionStorage.getItem("seeit_is_paused")) {
+          $("#status").text("Enable SeeIt");
+        }
+        else {
+          $("#status").text("Disable SeeIt");
+        }
+        chrome.extension.sendRequest({type: "update_icon"}, function(response){});
+        
+        $("#status").click(function () {
+          if (BG.sessionStorage.getItem("seeit_is_paused")) {
+            BG.sessionStorage.removeItem("seeit_is_paused");
+            $("#status").text("Disable SeeIt");
+          }
+          else {
+            BG.sessionStorage.setItem("seeit_is_paused", 1);
+            $("#status").text("Enable SeeIt");
+          }
+          chrome.extension.sendRequest({type: "update_icon"}, function(response){});
+        });
+      }
+
+      $(function() {
+        updateStatus();
+        
+        $('#options').click(function() {
+          BG.openTab("options.html");
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <div class="outer">
+    <div class="menu">
+      <ul>
+        <li><a id="status" href="#1">Enable SeeIt</a></li>
+        <li><a id="options" href="#2">Options</a></li>
+      </ul>
+    </div>
+    </div>
+  </body>
+</html>

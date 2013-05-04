@@ -1,0 +1,144 @@
+<html>
+  <script>
+  var g_activeTab = 0;
+  
+  chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+    if (tab.url.match(/.*reddit\.com.*/gi))
+    {
+      if (sessionStorage.getItem("seeit_is_paused")) {
+        chrome.pageAction.setIcon({path: "images/pageIconD.png", tabId: tabId});
+      } 
+      else {
+        chrome.pageAction.setIcon({path: "images/pageIcon.png", tabId: tabId});
+      }
+      chrome.pageAction.show(tabId);
+    }
+  });
+  
+  chrome.tabs.onActiveChanged.addListener(
+    function(tabId, selectInfo) {
+        g_activeTab = tabId;
+  });
+  
+  chrome.extension.onRequest.addListener(
+    function(request, sender, sendResponse) {
+      if (request.type == "pause_status") {
+        if (sessionStorage.getItem("seeit_is_paused")) {
+          sendResponse({seeit_is_paused: "1"});
+        }
+        else {
+          sendResponse({});
+        }
+      }
+      else if (request.type == "update_icon") {
+        if (sessionStorage.getItem("seeit_is_paused")) {
+          chrome.pageAction.setIcon({path: "images/pageIconD.png", tabId: g_activeTab})
+        }
+        else {
+          chrome.pageAction.setIcon({path: "images/pageIcon.png", tabId: g_activeTab})
+        }
+      }
+      else if (request.type == "preview_options") {
+        sendResponse({preview_delay: getPreviewDelay(),
+                      preview_window: getPreviewWindowBehavior(),
+                      preview_color: getPreviewLinkColor(),
+                      preview_disable: getPreviewDisable(),
+                      preview_useip: getPreviewUseIP()
+                    });
+      }
+      else if (request.type == "seeit_visit") {
+        chrome.history.addUrl({url: request.url});
+      }
+    });
+  
+  function getPreviewDelay() {
+    if (localStorage['seeit_preview_delay']) {
+      return localStorage['seeit_preview_delay'];
+    }
+    else {
+      return getPreviewDelayDefault();
+    }
+  }
+  
+  function getPreviewWindowBehavior() {
+    if (localStorage['seeit_preview_window']) {
+      return localStorage['seeit_preview_window'];
+    }
+    else {
+      return getPreviewWindowBehaviorDefault();
+    }
+  }
+  
+  function getPreviewLinkColor() {
+    if (localStorage['seeit_preview_color']) {
+      return localStorage['seeit_preview_color'];
+    }
+    else {
+      return getPreviewLinkColorDefault();
+    }
+  }
+
+  function getPreviewDisable() {
+    if (localStorage['seeit_preview_disable']) {
+      return localStorage['seeit_preview_disable'];
+    }
+    else {
+      return getPreviewDisableDefault();
+    }
+  }
+  
+  function getPreviewUseIP() {
+    if (localStorage['seeit_preview_useip']) {
+      return localStorage['seeit_preview_useip'];
+    }
+    else {
+      return getPreviewUseIPDefault();
+    }
+  }
+
+  function setPreviewDelay(delay) {
+    localStorage['seeit_preview_delay'] = delay;
+  }
+  
+  function setPreviewWindowBehavior(window_behavior) {
+    localStorage['seeit_preview_window'] = window_behavior;
+  }
+  
+  function setPreviewLinkColor(link_color) {
+    localStorage['seeit_preview_color'] = link_color;
+  }
+  
+  function setPreviewDisable(disable) {
+    localStorage['seeit_preview_disable'] = disable;
+  }
+  
+  function setPreviewUseIP(useip) {
+    localStorage['seeit_preview_useip'] = useip;
+  }
+
+  function openTab(url) {
+    chrome.tabs.create({url: url});
+  }
+
+  function getPreviewDelayDefault() {
+    return .6;
+  }
+  
+  function getPreviewWindowBehaviorDefault() {
+    return 1;
+  }
+  
+  function getPreviewLinkColorDefault() {
+    return '551A8B';
+  }
+
+  function getPreviewDisableDefault() {
+    return 0;
+  }
+  
+  function getPreviewUseIPDefault() {
+    return 1;
+  }
+
+  </script>
+</html>
